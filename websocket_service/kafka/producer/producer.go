@@ -30,7 +30,6 @@ func NewKafkaProducer(cfg config.Config, log logger.Logger) (*KafkaProducer, err
 }
 
 func (k *KafkaProducer) ProduceMessage(message []byte) error {
-	fmt.Println("Message========>>> ", string(message))
 	_, err := k.conn.WriteMessages(kafka.Message{Value: message})
 	if err != nil {
 		return err

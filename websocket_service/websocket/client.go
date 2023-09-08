@@ -97,27 +97,22 @@ func (c *Client) writePump() {
 				return
 			}
 
-			err := c.conn.WriteJSON(message)
+			w, err := c.conn.NextWriter(websocket.TextMessage)
 			if err != nil {
-				log.Println("error write message: ", err.Error())
 				return
 			}
-			//w, err := c.conn.NextWriter(websocket.TextMessage)
-			//if err != nil {
-			//	return
-			//}
-			//w.Write(message)
-			//
-			//// Add queued chat messages to the current websocket message.
-			//n := len(c.send)
-			//for i := 0; i < n; i++ {
-			//	w.Write(newline)
-			//	w.Write(<-c.send)
-			//}
-			//
-			//if err := w.Close(); err != nil {
-			//	return
-			//}
+			w.Write(message)
+
+			// Add queued chat messages to the current websocket message.
+			n := len(c.send)
+			for i := 0; i < n; i++ {
+				w.Write(newline)
+				w.Write(<-c.send)
+			}
+
+			if err := w.Close(); err != nil {
+				return
+			}
 		case <-ticker.C:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
@@ -128,13 +123,13 @@ func (c *Client) writePump() {
 }
 
 // serveWs handles websocket requests from the peer.
-func ServeWs(hub *Hub, c *gin.Context, kafka kafka.KafkaI) {
+func ServeWs(hub *Hub, c *gin.Context, kafka *kafka.KafkaI) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, kafka: kafka, conn: conn, send: make(chan []byte, 256)}
+	client := &Client{hub: hub, kafka: *kafka, conn: conn, send: make(chan []byte, 256)}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in
