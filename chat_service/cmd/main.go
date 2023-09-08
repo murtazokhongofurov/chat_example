@@ -31,7 +31,7 @@ func main() {
 		kafkaConn.Reads().Consume()
 		wg.Done()
 	}()
-	if err := http.ListenAndServe(":9111", nil); err != nil {
-		fmt.Println("error listen :9111", err)
+	if err := http.ListenAndServe(cfg.HttpPort, nil); err != nil {
+		fmt.Println("error listen port"+cfg.HttpPort, err)
 	}
 }
