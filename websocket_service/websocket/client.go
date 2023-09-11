@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -35,6 +36,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
+
 
 // Client is a middleman between the websocket connection and the hub.
 type Client struct {
@@ -129,14 +131,20 @@ func (c *Client) writePump() {
 
 // serveWs handles websocket requests from the peer.
 func ServeWs(hub *Hub, c *gin.Context, kafka kafka.KafkaI) {
+	IdStr := c.Query("token")
+	id, err := strconv.Atoi(IdStr)
+	if err != nil {
+		c.JSON(400, err)
+		return
+	}
+
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	client := &Client{hub: hub, kafka: kafka, conn: conn, send: make(chan []byte, 256)}
-	client.hub.register <- client
-
+	hub.clients[id] = client
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
 	go client.writePump()

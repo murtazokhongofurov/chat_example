@@ -8,7 +8,7 @@ package websocket
 // clients.
 type Hub struct {
 	// Registered clients.
-	clients map[*Client]bool
+	clients map[*Client]int
 
 	// Inbound messages from the clients.
 	broadcast chan []byte
@@ -19,20 +19,18 @@ type Hub struct {
 	unregister chan *Client
 }
 
-func NewHub() *Hub {
+func NewHub() *Hub { 
 	return &Hub{
 		broadcast:  make(chan []byte),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
-		clients:    make(map[*Client]bool),
+		clients:    make(map[int]*Client),
 	}
 }
 
 func (h *Hub) Run() {
 	for {
 		select {
-		case client := <-h.register:
-			h.clients[client] = true
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
 				delete(h.clients, client)
