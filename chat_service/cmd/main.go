@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/kafka_example/chat_service/config"
 	"github.com/kafka_example/chat_service/kafka/consumer"
+
 	"github.com/kafka_example/chat_service/pkg/db"
 	"github.com/kafka_example/chat_service/pkg/logger"
 	"github.com/kafka_example/chat_service/storage"
@@ -25,6 +27,16 @@ func main() {
 	}else{
 		fmt.Println("Connected to Kafka sucessfully")
 	}
-	kafka.ConsumeMessages()
+	go kafka.ConsumeMessages()
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+       
+        fmt.Fprintln(w, "Hello, World!")
+    })
+
+
+
+    if err := http.ListenAndServe(":8000", nil); err != nil {
+        fmt.Printf("Error starting server: %s\n", err)
+    }
 
 }
