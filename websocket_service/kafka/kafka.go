@@ -1,10 +1,8 @@
 package kafka
 
-import (
-	"github.com/kafka_example/websocket_service/config"
-	"github.com/kafka_example/websocket_service/kafka/producer"
-	"github.com/kafka_example/websocket_service/pkg/logger"
-)
+import "github.com/kafka_example/websocket_service/kafka/producer"
+
+
 
 type Kafka struct {
 	KafkaFunc *producer.KafkaProducer
