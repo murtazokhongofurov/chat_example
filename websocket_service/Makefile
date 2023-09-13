@@ -4,3 +4,6 @@ CURRENT_DIR=$(shell pwd)
 
 run:
 	go run cmd/main.go
+
+gen-proto:
+	./script/gen-proto.sh

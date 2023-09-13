@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS chats(
+    id SERIAL PRIMARY KEY,
+    chat_type VARCHAR(200),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);

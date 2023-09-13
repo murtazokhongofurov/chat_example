@@ -14,4 +14,13 @@ func (r storagePg) AddChat(req *pbch.ChatReq) (*pbch.ChatRes, error) {
 	return &res, nil
 }
 
-
+func (r storagePg) AddPrivateChat(req *pbch.PrivateChatReq) (*pbch.PrivateChatRes, error) {
+	res := pbch.PrivateChatRes{}
+	err := r.db.QueryRow(`INSERT INTO user_chat(user_id, chat_id) VALUES($1, $2) 
+	RETURNING id, user_id, chat_id, created_at`, req.UserId, req.ChatId).
+		Scan(&res.Id, &res.UserId, &res.ChatId, &res.CreatedAt)
+	if err != nil {
+		return &pbch.PrivateChatRes{}, err
+	}
+	return &res, nil
+}

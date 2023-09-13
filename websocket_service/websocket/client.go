@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/kafka_example/websocket_service/kafka"
+	grpcclient "github.com/kafka_example/websocket_service/pkg/grpc_client"
 )
 
 const (
@@ -44,6 +45,13 @@ type Client struct {
 	conn *websocket.Conn
 	// Buffered channel of outbound messages.
 	send chan []byte
+
+	userId int64
+}
+
+type messageChan struct {
+	Message []byte
+	UserId  int64
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -67,12 +75,16 @@ func (c *Client) readPump() {
 			}
 			break
 		}
-		err = c.kafka.Produce().ProduceMessage(msg)
-		if err != nil {
-			log.Println("error while produce message: ", err.Error())
-		}
+		// err = c.kafka.Produce().ProduceMessage(msg)
+		// if err != nil {
+		// 	log.Println("error while produce message: ", err.Error())
+		// }
 		msg = bytes.TrimSpace(bytes.Replace(msg, newline, space, -1))
-		c.hub.broadcast <- msg
+
+		c.hub.broadcast <- messageChan{
+			Message: msg,
+			UserId:  c.userId,
+		}
 	}
 }
 
@@ -123,7 +135,7 @@ func (c *Client) writePump() {
 }
 
 // serveWs handles websocket requests from the peer.
-func ServeWs(hub *Hub, c *gin.Context, kafka *kafka.KafkaI) {
+func ServeWs(hub *Hub, c *gin.Context, kafka *kafka.KafkaI, grpclient grpcclient.GrpcClientI) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Println(err)
