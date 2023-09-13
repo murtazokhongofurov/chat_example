@@ -3,15 +3,20 @@ package postgres
 import pbm "github.com/kafka_example/chat_service/genproto/message"
 
 func (r storagePg) AddMessage(req *pbm.MessageReq) (*pbm.MessageRes, error) {
+	tx, _ := r.db.Begin()
 	res := pbm.MessageRes{}
 	query := `
 	INSERT INTO 
 		messages(user_id, chat_id, text) 
 	VALUES 
 		($1, $2, $3) RETURNING id, user_id, chat_id, text, created_at, updated_at`
-	err := r.db.QueryRow(query, req.UserId, req.ChatId, req.MessageText).
+	err := tx.QueryRow(query, req.UserId, req.ChatId, req.MessageText).
 		Scan(&res.Id, &res.UserId, &res.ChatId, &res.MessageText, &res.CreatedAt, &res.UpdatedAt)
 	if err != nil {
+		tx.Rollback()
+		return &pbm.MessageRes{}, err
+	}
+	if err := tx.Commit(); err != nil {
 		return &pbm.MessageRes{}, err
 	}
 	return &res, nil
