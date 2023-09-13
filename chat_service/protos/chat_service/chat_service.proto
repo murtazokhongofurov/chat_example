@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option go_package="genproto/chat_service";
+package chat_service;
+
+
+service ChatService {
+   rpc  AddChat(ChatReq) returns (ChatRes) {}
+}
+
+
+
+message ChatReq {
+    string chat_type = 1;
+}
+
+message ChatRes {
+    int64 id = 1;
+    string chat_type = 2;
+}
