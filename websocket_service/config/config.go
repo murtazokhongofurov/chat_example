@@ -24,7 +24,7 @@ func Load() Config {
 	}
 
 	c.SocketPort = cast.ToString(getDefaultKey("SOCKET_PORT", "3333"))
-	c.KafkaPort = cast.ToString(getDefaultKey("KAFKA_PORT", "9092"))
+	c.KafkaPort = cast.ToString(getDefaultKey("KAFKA_PORT", "29092"))
 	c.KafkaHost = cast.ToString(getDefaultKey("KAFKA_HOST", "kafka"))
 	c.KafkaTopic = cast.ToString(getDefaultKey("KAFKA_TOPIC", "TOPIC"))
 	c.Partition = cast.ToInt(getDefaultKey("PARTITION", 0))
