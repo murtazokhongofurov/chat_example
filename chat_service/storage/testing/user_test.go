@@ -38,12 +38,11 @@ func (s *UserTest) TestCreateUser() {
 
 func (s *UserTest) TestGetUser() {
 	userId := chat_service.UserId{
-		UserId: 12,
+		UserId: 23,
 	}
 	user, err := s.Repo.FindUser(&userId)
 	s.Nil(err)
 	s.NotEmpty(user)
-
 }
 
 func (s *UserTest) UpdateUser() {
