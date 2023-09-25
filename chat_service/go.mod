@@ -1,16 +1,16 @@
 module github.com/kafka_example/chat_service
 
-go 1.21.0
+go 1.20
 
 require (
 	github.com/golang/protobuf v1.5.3
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
-	github.com/segmentio/kafka-go v0.4.42
+	github.com/segmentio/kafka-go v0.4.43
 	github.com/spf13/cast v1.5.1
-	github.com/stretchr/testify v1.8.1
-	go.uber.org/zap v1.25.0
-	google.golang.org/grpc v1.58.0
+	github.com/stretchr/testify v1.8.4
+	go.uber.org/zap v1.26.0
+	google.golang.org/grpc v1.58.2
 )
 
 require (

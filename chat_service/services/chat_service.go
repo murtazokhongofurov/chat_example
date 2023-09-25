@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 
 	pbch "github.com/kafka_example/chat_service/genproto/chat_service"
 	"github.com/kafka_example/chat_service/pkg/logger"
@@ -19,6 +20,7 @@ func (s *ChatService) AddChat(ctx context.Context, req *pbch.ChatReq) (*pbch.Cha
 }
 
 func (s *ChatService) AddUser(ctx context.Context, req *pbch.UserReq) (*pbch.UserRes, error) {
+	fmt.Println("===>>>", req)
 	res, err := s.storage.ChatApp().AddUser(req)
 	if err != nil {
 		s.log.Error("Error while insert", logger.Any("error insert user", err))

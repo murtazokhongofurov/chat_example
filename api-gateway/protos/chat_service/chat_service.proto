@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+option go_package="genproto/chat_service";
+package chat_service;
+
+
+service ChatService {
+   rpc  AddChat(ChatReq) returns (ChatRes) {}
+   rpc  AddPrivateChat(PrivateChatReq) returns (PrivateChatRes) {}
+   
+   rpc AddUser(UserReq) returns (UserRes) {}
+   rpc FindUser(UserId) returns (UserRes) {}
+   rpc RemoveUser(UserId) returns (Empty) {}
+   rpc Update(UserRes) returns (UserRes) {}
+}
+
+message Empty {}
+
+
+
+message ChatReq {
+    string chat_type = 1;
+}
+
+message ChatRes {
+    int64 id = 1;
+    string chat_type = 2;
+}
+
+message UserReq {
+    string first_name = 1;
+    string last_name = 2;
+    string user_name = 3;
+    string bio = 4;
+    string phone = 5;
+    string image = 6;
+}
+
+
+
+message UserRes {
+    int64 id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string user_name = 4;
+    string bio = 5;
+    string phone = 6;
+    string image = 7;
+}
+
+message UserId {
+    int64 user_id = 1;
+}
+
+message PrivateChatReq {
+    int64 user_id = 1;
+    int64 chat_id = 2;
+}
+
+message PrivateChatRes {
+    int64 id = 1;
+    int64 user_id = 2;
+    int64 chat_id = 3;
+    string created_at = 4;
+}
