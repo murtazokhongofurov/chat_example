@@ -1,16 +1,16 @@
 module github.com/kafka_example/websocket_service
 
-go 1.21.0
+go 1.20
 
 require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/websocket v1.5.0
 	github.com/joho/godotenv v1.5.1
-	github.com/segmentio/kafka-go v0.4.42
+	github.com/segmentio/kafka-go v0.4.43
 	github.com/spf13/cast v1.5.1
-	go.uber.org/zap v1.25.0
-	google.golang.org/grpc v1.58.0
+	go.uber.org/zap v1.26.0
+	google.golang.org/grpc v1.58.2
 )
 
 require (

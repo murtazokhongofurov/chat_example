@@ -1,10 +1,71 @@
 version: '3.8'
 
 services:
+  postgres:
+    container_name: db_name
+    image: postgres:15.1
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_NAME: postgres
+    # valumes:
+    #   - pgdata: /var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  chat_service:
+    container_name: chat_service
+    build: /chat_service
+    environment:
+      HTTP_PORT: :3333
+      DB_HOST: db_name
+      DB_PORT: 5432
+      DB_USER: developer
+      DB_PASSWORD: 12345
+      DB_NAME: postgres
+      LOG_LEVEL: debug
+      KAFKA_PORT: 29092
+      KAFKA_HOST: kafka
+    ports:
+      - 3333:3333
+    depends_on:
+      - postgres
+  
+  socket_service:
+    container_name: websocket_service
+    build: /websocket_service
+    environment:
+      SOCKET_PORT: :1111
+      KAFKA_PORT: 29092
+      KAFKA_HOST: kafka
+      KAFKA_TOPIC: kafkatopic
+      PARTITION: 0
+      LOG_LEVEL: debug
+    ports:
+      - 1111:1111
+    depends_on:
+      - chat_service
+
+  api-gateway:
+    container_name: api-gateway
+    build: /api-gateway
+    environment:
+      HTTP_PORT: :8080
+      CHAT_SERVICE_HOST: chat_service
+      CHAT_SERVICE_PORT: 3333
+      CSV_FILE_PATH: ./config/roles.csv
+      AUTH_FILE_PATH: ./config/auth.conf
+      SIGNINGKEY: lknkdsjkjrw4rufdsjk094u5ifjskfj4tufnk 
+    ports:
+      - 8080:8080
+    depends_on:
+      - chat_service
+    
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
-    ports: 
+    ports:
      - 8080:8080
     depends_on:
       - zookeeper
@@ -39,3 +100,4 @@ services:
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT, EXTERNAL_SAME_HOST:PLAINTEXT
       - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+

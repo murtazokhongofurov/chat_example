@@ -28,7 +28,7 @@ func Load() Config {
 		log.Fatalln("Error read .env: ", err)
 	}
 
-	c.HttpPort = cast.ToString(getDefaultKey("HTTP_PORT", "3333"))
+	c.HttpPort = cast.ToString(getDefaultKey("HTTP_PORT", ":3333"))
 	c.DbHost = cast.ToString(getDefaultKey("DB_HOST", "host"))
 	c.DbPort = cast.ToString(getDefaultKey("DB_PORT", "5432"))
 	c.DbUser = cast.ToString(getDefaultKey("DB_USER", "username"))
